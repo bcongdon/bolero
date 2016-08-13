@@ -1,9 +1,11 @@
-from .. import db
-from datetime import datetime, timedelta
+from .. import db, manager
+from datetime import datetime
 from ..utils import requires
+from ..scheduler import scheduler
 import tweepy
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Tweet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,24 +26,33 @@ def handle_authentication(config):
     return tweepy.API(auth)
 
 
-def get_tweets():
-    def within_one_day(time):
-        return datetime.utcnow() - time < timedelta(1)
+def save_tweet(t):
+    new_tweet = Tweet(id=t.id,
+                      text=t.text,
+                      user=t.user.screen_name,
+                      favorites=t.favorite_count,
+                      retweets=t.retweet_count,
+                      created_at=t.created_at)
+    db.session.add(new_tweet)
+    db.session.commit()
 
+
+@scheduler.scheduled_job('interval', hours=1, next_run_time=datetime.now())
+def get_tweets():
     api = handle_authentication()
-    page = 0
+    page = 1
     while True:
+        logger.info("Scraping page {0} of tweets.".format(page))
         tweet_page = api.user_timeline(count=100, page=page)
         tweet_ids = map(lambda t: t.id, tweet_page)
-        saved_ids = map(lambda t: t.id, Tweet.query.filter(Tweet.id.in_(tweet_ids)))
+        saved_ids = map(lambda t: t.id,
+                        Tweet.query.filter(Tweet.id.in_(tweet_ids)))
         unsaved = filter(lambda t: t.id not in saved_ids, tweet_page)
-        for t in unsaved:
-            new_tweet = Tweet(id=t.id,
-                              text=t.text,
-                              user=t.user.screen_name,
-                              favorites=t.favorite_count,
-                              retweets=t.retweet_count,
-                              created_at=t.created_at)
-            db.session.add(new_tweet)
-        db.session.commit()
-        return
+        if len(unsaved) > 0:
+            page += 1
+            map(save_tweet, unsaved)
+            logger.info("Saved {0} tweets.".format(len(unsaved)))
+        else:
+            return
+
+manager.create_api(Tweet,  methods=['GET', 'POST'])
