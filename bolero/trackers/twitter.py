@@ -44,7 +44,7 @@ def save_tweet(t):
     db.session.commit()
 
 
-@scheduler.scheduled_job('interval', hours=1, next_run_time=datetime.now())
+@scheduler.scheduled_job('interval', hours=1)
 def get_tweets():
     api = handle_authentication()
     page = 1
@@ -62,7 +62,7 @@ def get_tweets():
         else:
             return
 
-@scheduler.scheduled_job('interval', hours=12, next_run_time=datetime.now())
+@scheduler.scheduled_job('interval', hours=12)
 def get_followers():
     api = handle_authentication()
     count = api.me().followers_count

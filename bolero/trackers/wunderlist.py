@@ -55,7 +55,7 @@ def handle_authentication(config):
 
 
 from datetime import datetime
-@scheduler.scheduled_job('interval', hours=1, next_run_time=datetime.now())
+@scheduler.scheduled_job('interval', hours=1)
 def get_tasks():
     api = handle_authentication()
     lists = api.get_lists()
