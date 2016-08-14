@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class Tweet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     text = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
     user = db.Column(db.String(80))
