@@ -16,6 +16,13 @@ class Tweet(db.Model):
     retweets = db.Column(db.Integer, default=0)
 
 
+class FollowerCount(db.Model):
+    __tablename__ = "twitterfollowercount"
+    date = db.Column(db.DateTime(timezone=True), default=datetime.now,
+                     primary_key=True)
+    count = db.Column(db.Integer)
+
+
 @requires('twitter.consumer_key', 'twitter.consumer_secret',
           'twitter.access_token_key', 'twitter.access_token_secret')
 def handle_authentication(config):
@@ -55,4 +62,13 @@ def get_tweets():
         else:
             return
 
-manager.create_api(Tweet,  methods=['GET', 'POST'])
+@scheduler.scheduled_job('interval', hours=12, next_run_time=datetime.now())
+def get_followers():
+    api = handle_authentication()
+    count = api.me().followers_count
+    f = FollowerCount(date=datetime.now(), count=count)
+    db.session.add(f)
+    db.session.commit()
+    logger.info("Saved follower count: {0}".format(count))
+
+manager.create_api(Tweet,  methods=['GET'])
