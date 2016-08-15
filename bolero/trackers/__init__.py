@@ -1,1 +1,1 @@
-__all__ = ['twitter', 'wunderlist', 'withings_tracker']
+__all__ = ['twitter', 'wunderlist', 'withings_tracker', 'myfitnesspal_tracker']

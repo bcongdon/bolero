@@ -30,8 +30,7 @@ def handle_authentication(config):
     return WithingsApi(creds)
 
 
-from datetime import datetime
-@scheduler.scheduled_job('interval', hours=1, next_run_time=datetime.now())
+@scheduler.scheduled_job('interval', hours=1)
 def get_measurements():
     api = handle_authentication()
     measures = api.get_measures()
