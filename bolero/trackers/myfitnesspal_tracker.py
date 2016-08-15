@@ -3,6 +3,7 @@ from ..utils import requires
 from .. import db, manager
 from datetime import date, timedelta
 from ..scheduler import scheduler
+from collections import defaultdict
 
 
 @requires('myfitnesspal.username')
@@ -62,6 +63,14 @@ class MFPDay(db.Model):
     sodium = db.Column(db.Integer)
     sugar = db.Column(db.Integer)
 
+    def food_counts(self):
+        counts = defaultdict(int)
+        for f in set(self.foods):
+            counts[f.id] = db.session.query(foods_tbl).filter_by(
+                                food_id=f.id, day_date=self.date
+                                ).count()
+        return counts
+
     @staticmethod
     def save_or_update_day(d):
         day = (MFPDay.query.filter(MFPDay.date == d.date).first() or
@@ -75,7 +84,7 @@ class MFPDay(db.Model):
         db.session.commit()
 
 
-manager.create_api(MFPDay)
+manager.create_api(MFPDay, include_methods=['food_counts'])
 
 
 def get_day(date=date.today()):
