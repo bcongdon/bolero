@@ -1,6 +1,8 @@
 import myfitnesspal
 from ..utils import requires
 from .. import db, manager
+from datetime import date, timedelta
+from ..scheduler import scheduler
 
 
 @requires('myfitnesspal.username')
@@ -73,11 +75,22 @@ class MFPDay(db.Model):
         db.session.commit()
 
 
-def get_data():
+manager.create_api(MFPDay)
+
+
+def get_day(date=date.today()):
     api = handle_authentication()
-    for i in xrange(1, 30):
-        day = api.get_date(2016, 7, i)
-        MFPDay.save_or_update_day(day)
+    day = api.get_date(date)
+    MFPDay.save_or_update_day(day)
 
 
-get_data()
+def backfill(start, end=date.today()):
+    d = start
+    while d <= end:
+        get_day(d)
+        d += timedelta(days=1)
+
+
+@scheduler.scheduled_job('interval', days=1)
+def get_last_week():
+    backfill(date.today() - timedelta(days=7))
