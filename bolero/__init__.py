@@ -4,7 +4,7 @@ from flask_restless import APIManager
 import logging
 import json
 import importlib
-from .utils import config_file_location
+from .utils import get_loaded_trackers
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -20,14 +20,15 @@ db = SQLAlchemy(app)
 
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
-# Import enabled trackers
-with open(config_file_location()) as f:
-    loaded_trackers = json.load(f)['enabled_trackers']
+
+def setup():
+    # Import enabled trackers
+    loaded_trackers = get_loaded_trackers()
     for t in loaded_trackers:
         logger.info('Loading tracker: {}'.format(t))
-        importlib.import_module('bolero.trackers.' + t)
+        importlib.import_module('.trackers.' + t, 'bolero')
 
-db.create_all()
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)

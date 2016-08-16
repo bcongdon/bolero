@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from bolero import app
+import bolero
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    bolero.setup()
+    bolero.app.run(debug=True)

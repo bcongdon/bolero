@@ -1,6 +1,8 @@
 import json
 import os
 import bolero
+import logging
+logger = logging.getLogger(__file__)
 
 
 def config_file_location():
@@ -14,6 +16,16 @@ def get_config_keys(keys):
     all_keys.update(bolero.app.config['AUTH_KEYS'])
     requested_keys = {x: all_keys[x] for x in keys}
     return requested_keys
+
+
+def get_loaded_trackers():
+    if not os.path.exists(config_file_location()):
+        logger.warn('Not loading trackers because no config.json')
+        return []
+    else:
+        with open(config_file_location()) as f:
+            d = json.load(f)
+            return d['enabled_trackers']
 
 
 class requires(object):
