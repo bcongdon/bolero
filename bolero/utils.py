@@ -10,22 +10,24 @@ def config_file_location():
     return os.path.abspath(os.path.join(curr_dir, os.pardir, 'config.json'))
 
 
+def get_config_file():
+    if not os.path.exists(config_file_location()):
+        logger.warn('Not loading config because no config.json')
+    else:
+        with open(config_file_location()) as f:
+            return json.load(f)
+
+
 def get_config_keys(keys):
-    with open(config_file_location()) as f:
-        all_keys = json.load(f)
+    all_keys = get_config_file() or {}
     all_keys.update(bolero.app.config['AUTH_KEYS'])
     requested_keys = {x: all_keys[x] for x in keys}
     return requested_keys
 
 
 def get_loaded_trackers():
-    if not os.path.exists(config_file_location()):
-        logger.warn('Not loading trackers because no config.json')
-        return []
-    else:
-        with open(config_file_location()) as f:
-            d = json.load(f)
-            return d['enabled_trackers']
+    config = get_config_file() or {}
+    return config.get('enabled_trackers', [])
 
 
 class requires(object):
