@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restless import APIManager
 import logging
-import json
 import importlib
 from .utils import get_loaded_trackers
 logger = logging.getLogger(__name__)

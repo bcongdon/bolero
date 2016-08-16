@@ -17,7 +17,8 @@ class Task(db.Model):
 
     @staticmethod
     def save_or_update(t):
-        task = Task.query.filter(Task.id == t['id']).first() or Task(id=t['id'])
+        task = (Task.query.filter(Task.id == t['id']).first() or
+                Task(id=t['id']))
         task.title = t['title']
         task.created_at = parse(t['created_at'])
         task.list_id = t['list_id']
