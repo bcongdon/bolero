@@ -1,8 +1,8 @@
-from withings import WithingsAuth, WithingsApi, WithingsCredentials
 from ..utils import requires
 import logging
 from .. import db, manager
 from ..scheduler import scheduler
+from withings import WithingsAuth, WithingsApi, WithingsCredentials
 logger = logging.getLogger(__name__)
 
 

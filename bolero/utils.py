@@ -1,5 +1,7 @@
 import json
 import os
+import bolero
+
 
 def config_file_location():
     curr_dir = os.path.dirname(os.path.abspath(__file__))
@@ -9,6 +11,7 @@ def config_file_location():
 def get_config_keys(keys):
     with open(config_file_location()) as f:
         all_keys = json.load(f)
+    all_keys.update(bolero.app.config['AUTH_KEYS'])
     requested_keys = {x: all_keys[x] for x in keys}
     return requested_keys
 
