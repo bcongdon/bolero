@@ -15,3 +15,7 @@ scheduler.configure(executors=executors,
 scheduler.start()
 
 
+def do_all_jobs_now():
+    jobs = scheduler.get_jobs()
+    for job in jobs:
+        job.func()
