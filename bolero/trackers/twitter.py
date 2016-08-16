@@ -62,6 +62,7 @@ def get_tweets():
         else:
             return
 
+
 @scheduler.scheduled_job('interval', hours=12)
 def get_followers():
     api = handle_authentication()

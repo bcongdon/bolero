@@ -54,7 +54,6 @@ def handle_authentication(config):
     return client
 
 
-from datetime import datetime
 @scheduler.scheduled_job('interval', hours=1)
 def get_tasks():
     api = handle_authentication()

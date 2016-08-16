@@ -13,12 +13,15 @@ class Measurement(db.Model):
 
     @staticmethod
     def save_or_update(m):
-        measure = (Measurement.query.filter(Measurement.id == m.grpid).first() or
+        measure = (Measurement.query.filter(
+                   Measurement.id == m.grpid).first() or
                    Measurement(id=m.grpid))
         measure.date = m.date
         measure.weight = m.weight
         db.session.add(measure)
         db.session.commit()
+
+manager.create_api(Measurement)
 
 
 @requires('withings.access_token', 'withings.access_token_secret',
