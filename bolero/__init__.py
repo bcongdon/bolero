@@ -2,6 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restless import APIManager
 import logging
+import json
+import importlib
+
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -15,7 +18,11 @@ db = SQLAlchemy(app)
 
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
-from trackers import *
+# Import enabled trackers
+with open('config.json') as f:
+    loaded_trackers = json.load(f)['enabled_trackers']
+    for t in loaded_trackers:
+        importlib.import_module('.' + t, package='bolero.trackers')
 
 db.create_all()
 
