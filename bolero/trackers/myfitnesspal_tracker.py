@@ -21,6 +21,10 @@ foods_tbl = db.Table('food_join',
 
 
 class MFPFood(db.Model):
+    """
+    A unique 'food_type + quantity' model object. De-duplicated and referenced
+    by 'foods_tbl' to save disk space in the database.
+    """
     __tablename__ = 'mfpfood'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
@@ -33,6 +37,7 @@ class MFPFood(db.Model):
 
     @staticmethod
     def identical_food(f):
+        """ Returns an identical MFPFood object if one exists """
         food_q = MFPFood.query.filter(MFPFood.name == f.name)
         if not food_q.first():
             return False
@@ -43,6 +48,7 @@ class MFPFood(db.Model):
 
     @staticmethod
     def save_food(f):
+        """ Does a 'get_or_save' style save for a python-myfitnesspal object"""
         food = MFPFood.identical_food(f)
         if not food:
             tot = f.totals
@@ -53,6 +59,7 @@ class MFPFood(db.Model):
 
 
 class MFPDay(db.Model):
+    """ Model to hold a day worth of myfitnesspal food data """
     __tablename__ = 'mfpday'
     date = db.Column(db.Date, primary_key=True)
     foods = db.relationship(MFPFood, secondary=foods_tbl)
@@ -88,12 +95,14 @@ manager.create_api(MFPDay, include_methods=['food_counts'])
 
 
 def get_day(date=date.today()):
+    """ Saves a day's (defaults to today) nutrition entries """
     api = handle_authentication()
     day = api.get_date(date)
     MFPDay.save_or_update_day(day)
 
 
 def backfill(start, end=date.today()):
+    """ Saves the range of day entries between 'start' and 'end' """
     d = start
     while d <= end:
         get_day(d)
@@ -102,4 +111,5 @@ def backfill(start, end=date.today()):
 
 @scheduler.scheduled_job('interval', days=1)
 def get_last_week():
+    """ Saves the past 7 days worth of entries """
     backfill(date.today() - timedelta(days=7))

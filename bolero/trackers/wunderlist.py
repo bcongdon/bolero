@@ -57,6 +57,10 @@ def handle_authentication(config):
 
 @scheduler.scheduled_job('interval', hours=1)
 def get_tasks():
+    """
+    Syncs and saves all completed and non-completed tasks for the authenticated
+    user
+    """
     api = handle_authentication()
     lists = api.get_lists()
     map(List.save_or_update, lists)

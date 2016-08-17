@@ -46,6 +46,10 @@ def save_tweet(t):
 
 @scheduler.scheduled_job('interval', hours=1)
 def get_tweets():
+    """
+    Saves all tweets sent by authenticated user until it finds tweets that have
+    already been saved.
+    """
     api = handle_authentication()
     page = 1
     while True:
@@ -65,6 +69,7 @@ def get_tweets():
 
 @scheduler.scheduled_job('interval', hours=12)
 def get_followers():
+    """ Saves authenticated user's current number of followers """
     api = handle_authentication()
     count = api.me().followers_count
     f = FollowerCount(date=datetime.now(), count=count)

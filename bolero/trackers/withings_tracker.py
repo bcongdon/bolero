@@ -35,6 +35,9 @@ def handle_authentication(config):
 
 @scheduler.scheduled_job('interval', hours=1)
 def get_measurements():
+    """
+    Saves all measurements (weight, body fat, etc) for the authenticated user
+    """
     api = handle_authentication()
     measures = api.get_measures()
     map(Measurement.save_or_update, filter(lambda t: t.weight, measures))
