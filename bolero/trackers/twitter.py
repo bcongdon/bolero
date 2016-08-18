@@ -34,6 +34,7 @@ def handle_authentication(config):
 
 
 def save_tweet(t):
+    """ Saves a tweepy tweet object as a Tweet in the database """
     new_tweet = Tweet(id=t.id,
                       text=t.text,
                       user=t.user.screen_name,

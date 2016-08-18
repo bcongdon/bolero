@@ -5,12 +5,6 @@ from datetime import date, timedelta
 from ..scheduler import scheduler
 from collections import defaultdict
 
-
-@requires('myfitnesspal.username')
-def handle_authentication(config):
-    return myfitnesspal.Client(config['myfitnesspal.username'])
-
-
 foods_tbl = db.Table('food_join',
                      db.Column('food_id', db.Integer,
                                db.ForeignKey('mfpfood.id')),
@@ -71,6 +65,11 @@ class MFPDay(db.Model):
     sugar = db.Column(db.Integer)
 
     def food_counts(self):
+        """
+        Counts references to a specific food during the MFPDay. Necessary
+        because Flask-SQLAlchemy / Flask-Restless only return one instance
+        of each food, regardless of actual count.
+        """
         counts = defaultdict(int)
         for f in set(self.foods):
             counts[f.id] = db.session.query(foods_tbl).filter_by(
@@ -80,6 +79,10 @@ class MFPDay(db.Model):
 
     @staticmethod
     def save_or_update_day(d):
+        """
+        Saves a python-myfitnespal day object as a MFPDay in the database.
+        Overrides any prefious day data for that date if it exists.
+        """
         day = (MFPDay.query.filter(MFPDay.date == d.date).first() or
                MFPDay(date=d.date))
         for k in d.totals.keys():
@@ -92,6 +95,11 @@ class MFPDay(db.Model):
 
 
 manager.create_api(MFPDay, include_methods=['food_counts'])
+
+
+@requires('myfitnesspal.username')
+def handle_authentication(config):
+    return myfitnesspal.Client(config['myfitnesspal.username'])
 
 
 def get_day(date=date.today()):
