@@ -2,7 +2,7 @@ from ..utils import requires
 import logging
 from .. import db, manager
 from ..scheduler import scheduler
-from withings import WithingsAuth, WithingsApi, WithingsCredentials
+from withings import WithingsApi, WithingsCredentials
 logger = logging.getLogger(__name__)
 
 
@@ -41,18 +41,3 @@ def get_measurements():
     api = handle_authentication()
     measures = api.get_measures()
     map(Measurement.save_or_update, filter(lambda t: t.weight, measures))
-
-
-if __name__ == "__main__":
-    consumer_key = raw_input("Consumer key?").strip()
-    consumer_secret = raw_input("Consumer secret?").strip()
-    auth = WithingsAuth(consumer_key, consumer_secret)
-    authorize_url = auth.get_authorize_url()
-    print("Go to %s allow the app and copy your oauth_verifier" %
-          authorize_url)
-
-    oauth_verifier = raw_input('Please enter your oauth_verifier: ')
-    creds = auth.get_credentials(oauth_verifier)
-
-    for key, val in creds.__dict__.iteritems():
-        print('"{}: {}"'.format('withings.' + key, val))
