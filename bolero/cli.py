@@ -1,6 +1,6 @@
 from . import app
 from withings import WithingsAuth
-
+import uuid
 
 @app.cli.command()
 def auth_withings():
@@ -16,3 +16,8 @@ def auth_withings():
 
     for key, val in creds.__dict__.iteritems():
         print('"{}: {}"'.format('withings.' + key, val))
+
+
+@app.cli.command()
+def generatesecret():
+    print("Random secret: " + str(uuid.uuid4()).replace('-', ''))
