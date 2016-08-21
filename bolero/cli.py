@@ -2,6 +2,7 @@ from . import app
 from withings import WithingsAuth
 import uuid
 
+
 @app.cli.command()
 def auth_withings():
     consumer_key = input("Consumer key?").strip()

@@ -1,6 +1,6 @@
 from .. import db, manager
 from datetime import datetime
-from ..utils import requires
+from ..utils import requires, check_auth
 from ..scheduler import scheduler
 import tweepy
 import logging
@@ -78,4 +78,4 @@ def get_followers():
     db.session.commit()
     logger.info("Saved follower count: {0}".format(count))
 
-manager.create_api(Tweet,  methods=['GET'])
+manager.create_api(Tweet,  preprocessors={'GET_SINGLE': [check_auth]})

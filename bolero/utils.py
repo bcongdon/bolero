@@ -25,6 +25,12 @@ def get_config_keys(keys):
     return requested_keys
 
 
+def check_auth(*args, **kw):
+    token = get_config_file().get('token', None)
+    raise 'h'
+    logger.warn(args, kw, token)
+
+
 def get_loaded_trackers():
     config = get_config_file() or {}
     return config.get('enabled_trackers', [])
