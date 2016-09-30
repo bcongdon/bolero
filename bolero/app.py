@@ -19,9 +19,6 @@ db = SQLAlchemy(app)
 
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
-# Load CLI commands
-from . import cli
-
 
 def setup():
     # Import enabled trackers
@@ -32,6 +29,10 @@ def setup():
         tracker.create_api()
 
     db.create_all()
+
+
+# Load CLI commands
+from . import cli
 
 if __name__ == '__main__':
     setup()

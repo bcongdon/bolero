@@ -20,7 +20,7 @@ def get_config_file():
 
 def get_config_keys(keys):
     all_keys = get_config_file() or {}
-    all_keys.update(bolero.app.config['AUTH_KEYS'])
+    all_keys.update(bolero.app.app.config['AUTH_KEYS'])
     requested_keys = {x: all_keys[x] for x in keys}
     return requested_keys
 

@@ -1,4 +1,5 @@
-from .app import app
+from .app import app, setup
+from .scheduler import do_all_jobs_now
 from withings import WithingsAuth
 import uuid
 
@@ -22,3 +23,8 @@ def auth_withings():
 @app.cli.command()
 def generatesecret():
     print("Random secret: " + str(uuid.uuid4()).replace('-', ''))
+
+@app.cli.command()
+def populatedb():
+    setup()
+    do_all_jobs_now()

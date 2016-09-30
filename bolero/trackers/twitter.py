@@ -68,7 +68,7 @@ def get_tweets():
                         Tweet.query.filter(Tweet.id.in_(tweet_ids)))
 
         # Filter out any tweets that have already been saved
-        unsaved = filter(lambda t: t.id not in saved_ids, tweet_page)
+        unsaved = list(filter(lambda t: t.id not in saved_ids, tweet_page))
 
         # Save any unsaved tweets
         if unsaved:
