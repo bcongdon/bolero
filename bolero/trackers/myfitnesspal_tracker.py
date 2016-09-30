@@ -1,6 +1,6 @@
 import myfitnesspal
 from ..utils import requires
-from .. import db, manager
+from ..app import db, manager
 from datetime import date, timedelta
 from ..scheduler import scheduler
 from collections import defaultdict
@@ -94,9 +94,6 @@ class MFPDay(db.Model):
         db.session.commit()
 
 
-manager.create_api(MFPDay, include_methods=['food_counts'])
-
-
 @requires('myfitnesspal.username')
 def handle_authentication(config):
     return myfitnesspal.Client(config['myfitnesspal.username'])
@@ -121,3 +118,7 @@ def backfill(start, end=date.today()):
 def get_last_week():
     """ Saves the past 7 days worth of entries """
     backfill(date.today() - timedelta(days=7))
+
+
+def create_api():
+    manager.create_api(MFPDay, include_methods=['food_counts'])

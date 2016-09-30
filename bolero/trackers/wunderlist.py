@@ -1,5 +1,5 @@
 import wunderpy2
-from .. import db, manager
+from ..app import db, manager
 from ..utils import requires
 from ..scheduler import scheduler
 import logging

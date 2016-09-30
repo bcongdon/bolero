@@ -1,6 +1,6 @@
 from ..utils import requires
 import logging
-from .. import db, manager
+from ..app import db, manager
 from ..scheduler import scheduler
 from withings import WithingsApi, WithingsCredentials
 logger = logging.getLogger(__name__)
@@ -21,8 +21,6 @@ class Measurement(db.Model):
         db.session.add(measure)
         db.session.commit()
 
-manager.create_api(Measurement)
-
 
 @requires('withings.access_token', 'withings.access_token_secret',
           'withings.consumer_key', 'withings.consumer_secret',
@@ -40,4 +38,9 @@ def get_measurements():
     """
     api = handle_authentication()
     measures = api.get_measures()
-    map(Measurement.save_or_update, filter(lambda t: t.weight, measures))
+    for m in filter(lambda t: t.weight, measures):
+        Measurement.save_or_update(m)
+
+
+def create_api():
+    manager.create_api(Measurement)
