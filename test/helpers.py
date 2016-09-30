@@ -1,14 +1,15 @@
 import unittest
 import bolero
+from bolero import app
 
 
 class BoleroTestCase(unittest.TestCase):
 
     def setUp(self):
-        bolero.app.config['TESTING'] = True
-        bolero.setup()
-        self.app = bolero.app
-        self.client = bolero.app.test_client()
+        app.app.config['TESTING'] = True
+        bolero.app.setup()
+        self.app = app.app
+        self.client = app.app.test_client()
 
     def tearDown(self):
         pass
