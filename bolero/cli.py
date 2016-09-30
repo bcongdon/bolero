@@ -1,4 +1,4 @@
-from . import app
+from .app import app
 from withings import WithingsAuth
 import uuid
 

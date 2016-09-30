@@ -91,3 +91,4 @@ config.json
 test.db
 cover
 venv3
+testdb
