@@ -24,6 +24,7 @@ def auth_withings():
 def generatesecret():
     print("Random secret: " + str(uuid.uuid4()).replace('-', ''))
 
+
 @app.cli.command()
 def populatedb():
     setup()
