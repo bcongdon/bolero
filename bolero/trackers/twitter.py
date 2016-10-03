@@ -1,7 +1,6 @@
 from . import db
 from datetime import datetime
 from ..utils import requires, check_auth, get_or_create
-from ..scheduler import scheduler
 from .tracker import BoleroTracker
 import tweepy
 import logging
@@ -27,9 +26,11 @@ class FollowerCount(db.Model):
 
 
 class TwitterTracker(BoleroTracker):
+    service_name = 'twitter'
+
     @requires('twitter.consumer_key', 'twitter.consumer_secret',
               'twitter.access_token_key', 'twitter.access_token_secret')
-    def handle_authentication(self, config):
+    def handleAuthentication(self, config):
         """ Authenticate and return an authenticated tweepy API object """
         auth = tweepy.OAuthHandler(config['twitter.consumer_key'],
                                    config['twitter.consumer_secret'])
