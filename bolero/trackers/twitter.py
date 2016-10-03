@@ -1,4 +1,5 @@
-from ..app import db, manager
+from ..app import manager
+from . import db
 from datetime import datetime
 from ..utils import requires, check_auth, get_or_create
 from ..scheduler import scheduler
@@ -49,7 +50,7 @@ class TwitterTracker(BoleroTracker):
         db.session.add(new_tweet)
         db.session.commit()
 
-    @scheduler.scheduled_job('interval', hours=1)
+    # @scheduler.scheduled_job('interval', hours=1)
     def get_tweets(self, backfill=True):
         """
         Grabs and saves all tweets sent by authenticated user until it finds
@@ -80,7 +81,7 @@ class TwitterTracker(BoleroTracker):
             else:
                 break  # Break if there are no unsaved tweets in this page
 
-    @scheduler.scheduled_job('interval', hours=12)
+    # @scheduler.scheduled_job('interval', hours=12)
     def get_followers(self):
         """ Saves authenticated user's current number of followers """
         api = self.client

@@ -1,5 +1,6 @@
 import wunderpy2
-from ..app import db, manager
+from ..app import manager
+from . import db
 from ..utils import requires
 from ..scheduler import scheduler
 import logging
@@ -55,7 +56,7 @@ def handle_authentication(config):
     return client
 
 
-@scheduler.scheduled_job('interval', hours=1)
+# @scheduler.scheduled_job('interval', hours=1)
 def get_tasks():
     """
     Syncs and saves all completed and non-completed tasks for the authenticated

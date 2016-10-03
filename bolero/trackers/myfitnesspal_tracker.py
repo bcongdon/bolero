@@ -1,6 +1,7 @@
 import myfitnesspal
 from ..utils import requires
-from ..app import db, manager
+from ..app import manager
+from . import db
 from datetime import date, timedelta
 from ..scheduler import scheduler
 from .tracker import BoleroTracker
@@ -113,7 +114,7 @@ class MyFitnessPalTracker(BoleroTracker):
             self.get_day(d)
             d += timedelta(days=1)
 
-    @scheduler.scheduled_job('interval', days=1)
+    # @scheduler.scheduled_job('interval', days=1)
     def get_last_week(self):
         """ Saves the past 7 days worth of entries """
         self.scrape_range(date.today() - timedelta(days=7))

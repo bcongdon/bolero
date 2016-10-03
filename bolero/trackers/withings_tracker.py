@@ -1,6 +1,7 @@
 from ..utils import requires
 import logging
-from ..app import db, manager
+from ..app import manager
+from . import db
 from ..scheduler import scheduler
 from withings import WithingsApi, WithingsCredentials
 logger = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ def handle_authentication(config):
     return WithingsApi(creds)
 
 
-@scheduler.scheduled_job('interval', hours=1)
+# @scheduler.scheduled_job('interval', hours=1)
 def get_measurements():
     """
     Saves all measurements (weight, body fat, etc) for the authenticated user

@@ -1,6 +1,6 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_restless import APIManager
+from .trackers import db
 import logging
 import importlib
 from .utils import get_loaded_trackers, get_config_file
@@ -15,20 +15,20 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Setup logging
 logging.basicConfig(level="INFO")
 
-db = SQLAlchemy(app)
-
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
 
 def setup():
+    db.init_app(app)
+
     # Import enabled trackers
     loaded_trackers = get_loaded_trackers()
     for t in loaded_trackers:
         logger.info('Loading tracker: {}'.format(t))
         tracker = importlib.import_module('.trackers.' + t, 'bolero')
-        tracker.create_api()
-
-    db.create_all()
+        # tracker.create_api()
+    with app.app_context():
+        db.create_all()
 
 
 # Load CLI commands
