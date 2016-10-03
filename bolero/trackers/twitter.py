@@ -1,4 +1,3 @@
-from ..app import manager
 from . import db
 from datetime import datetime
 from ..utils import requires, check_auth, get_or_create
@@ -91,8 +90,8 @@ class TwitterTracker(BoleroTracker):
         db.session.commit()
         logger.info("Saved follower count: {0}".format(count))
 
-    def create_api():
+    def create_api(self, manager):
         manager.create_api(Tweet,  preprocessors={'GET_SINGLE': [check_auth]})
 
-    def backfill():
+    def backfill(self):
         self.get_tweets(backfill=True)

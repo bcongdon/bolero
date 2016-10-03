@@ -1,6 +1,5 @@
 import myfitnesspal
 from ..utils import requires
-from ..app import manager
 from . import db
 from datetime import date, timedelta
 from ..scheduler import scheduler
@@ -119,5 +118,5 @@ class MyFitnessPalTracker(BoleroTracker):
         """ Saves the past 7 days worth of entries """
         self.scrape_range(date.today() - timedelta(days=7))
 
-    def create_api(self):
+    def create_api(self, manager):
         manager.create_api(MFPDay, include_methods=['food_counts'])

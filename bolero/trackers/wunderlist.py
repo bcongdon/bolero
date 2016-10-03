@@ -1,8 +1,8 @@
 import wunderpy2
-from ..app import manager
 from . import db
 from ..utils import requires
 from ..scheduler import scheduler
+from .tracker import BoleroTracker
 import logging
 from dateutil.parser import parse
 from itertools import chain
@@ -48,28 +48,29 @@ class List(db.Model):
         db.session.commit()
 
 
-@requires('wunderlist.access_token', 'wunderlist.client_id')
-def handle_authentication(config):
-    api = wunderpy2.WunderApi()
-    client = api.get_client(config['wunderlist.access_token'],
-                            config['wunderlist.client_id'])
-    return client
+class WunderlistTracker(BoleroTracker):
+    @requires('wunderlist.access_token', 'wunderlist.client_id')
+    def handle_authentication(self, config):
+        api = wunderpy2.WunderApi()
+        client = api.get_client(config['wunderlist.access_token'],
+                                config['wunderlist.client_id'])
+        return client
 
+    # @scheduler.scheduled_job('interval', hours=1)
+    def get_tasks(self):
+        """
+        Syncs and saves all completed and non-completed tasks for the
+        authenticated user
+        """
+        api = self.client()
+        lists = api.get_lists()
+        map(List.save_or_update, lists)
+        list_ids = map(lambda x: x['id'], lists)
+        uncompleted = (api.get_tasks(_id) for _id in list_ids)
+        completed = (api.get_tasks(_id, completed=True) for _id in list_ids)
+        total = (i for sublist in chain(uncompleted, completed)
+                 for i in sublist)
+        map(Task.save_or_update, total)
 
-# @scheduler.scheduled_job('interval', hours=1)
-def get_tasks():
-    """
-    Syncs and saves all completed and non-completed tasks for the authenticated
-    user
-    """
-    api = handle_authentication()
-    lists = api.get_lists()
-    map(List.save_or_update, lists)
-    list_ids = map(lambda x: x['id'], lists)
-    uncompleted = (api.get_tasks(_id) for _id in list_ids)
-    completed = (api.get_tasks(_id, completed=True) for _id in list_ids)
-    total = (i for sublist in chain(uncompleted, completed)
-             for i in sublist)
-    map(Task.save_or_update, total)
-
-manager.create_api(Task, methods=['GET'])
+    def create_api(self, manager):
+        manager.create_api(Task, methods=['GET'])
