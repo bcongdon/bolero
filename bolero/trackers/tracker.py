@@ -7,3 +7,6 @@ class BoleroTracker(object):
 
     def backfill(self):
         raise NotImplementedError
+
+    def create_api(self, manager):
+        raise NotImplementedError
