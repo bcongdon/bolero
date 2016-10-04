@@ -29,6 +29,7 @@ requests-oauth==0.4.1
 requests-oauthlib==0.6.2
 six==1.10.0
 SQLAlchemy==1.0.14
+SQLAlchemy-Utils==0.32.9
 sympy==0.7.6.1
 tweepy==3.5.0
 tzlocal==1.2.2
