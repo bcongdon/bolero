@@ -50,7 +50,6 @@ class TwitterTracker(BoleroTracker):
         db.session.add(new_tweet)
         db.session.commit()
 
-    # @scheduler.scheduled_job('interval', hours=1)
     def get_tweets(self, backfill=False):
         """
         Grabs and saves all tweets sent by authenticated user until it finds
@@ -83,8 +82,8 @@ class TwitterTracker(BoleroTracker):
 
     def update(self):
         self.get_tweets()
+        self.get_followers()
 
-    # @scheduler.scheduled_job('interval', hours=12)
     def get_followers(self):
         """ Saves authenticated user's current number of followers """
         api = self.client
@@ -99,3 +98,4 @@ class TwitterTracker(BoleroTracker):
 
     def backfill(self):
         self.get_tweets(backfill=True)
+        self.get_followers()
