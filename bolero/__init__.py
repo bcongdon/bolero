@@ -1,5 +1,5 @@
 from trackers.twitter import TwitterTracker
 
-trackers = [
+tracker_classes = [
     TwitterTracker
 ]

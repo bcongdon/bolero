@@ -51,7 +51,7 @@ class TwitterTracker(BoleroTracker):
         db.session.commit()
 
     # @scheduler.scheduled_job('interval', hours=1)
-    def get_tweets(self, backfill=True):
+    def get_tweets(self, backfill=False):
         """
         Grabs and saves all tweets sent by authenticated user until it finds
         tweets that have already been saved.
@@ -80,6 +80,9 @@ class TwitterTracker(BoleroTracker):
                 logger.info("Saved {0} tweets.".format(len(unsaved)))
             else:
                 break  # Break if there are no unsaved tweets in this page
+
+    def update(self):
+        self.get_tweets()
 
     # @scheduler.scheduled_job('interval', hours=12)
     def get_followers(self):

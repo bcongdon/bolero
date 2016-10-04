@@ -1,5 +1,4 @@
-from .app import app, setup
-from .scheduler import do_all_jobs_now
+from .app import app, load_trackers, setup
 from withings import WithingsAuth
 import uuid
 
@@ -26,6 +25,14 @@ def generatesecret():
 
 
 @app.cli.command()
-def populatedb():
+def updateall():
     setup()
-    do_all_jobs_now()
+    for t in load_trackers():
+        t().update()
+
+
+@app.cli.command()
+def backfillall():
+    setup()
+    for t in load_trackers():
+        t().backfill()

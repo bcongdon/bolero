@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restless import APIManager
 from .trackers import db
-from . import trackers
 import logging
 from .utils import get_loaded_trackers, get_config_file
+from . import tracker_classes
 from .scheduler import scheduler
 
 logger = logging.getLogger(__name__)
@@ -20,15 +20,18 @@ logging.basicConfig(level="INFO")
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
 
-def setup():
-    db.init_app(app)
-
+def load_trackers():
     loaded_trackers = get_loaded_trackers()  # Load names of imported trackers
 
     # Filter enabled tracker object classes
-    tracker_objects = [x for x in trackers if x.__name__ in loaded_trackers or
-                       x.service_name in loaded_trackers]
-    for t in tracker_objects:
+    return [x for x in tracker_classes if x.__name__ in loaded_trackers or
+            x.service_name in loaded_trackers]
+
+
+def setup():
+    db.init_app(app)
+
+    for t in load_trackers():
         t_instance = t()
         t_instance.create_api(manager)
 
