@@ -5,13 +5,15 @@ import logging
 from .utils import get_loaded_trackers, get_config_file
 from . import tracker_classes
 from .scheduler import scheduler
+import os
 
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['AUTH_KEYS'] = dict()
-app.config['SQLALCHEMY_DATABASE_URI'] = get_config_file()['sql_url']
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ['SQL_URL'] or
+                                         get_config_file()['sql_url'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Setup logging
