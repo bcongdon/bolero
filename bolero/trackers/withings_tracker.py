@@ -1,7 +1,6 @@
 from ..utils import requires
 import logging
 from . import db
-from ..scheduler import scheduler
 from .tracker import BoleroTracker
 from withings import WithingsApi, WithingsCredentials
 logger = logging.getLogger(__name__)

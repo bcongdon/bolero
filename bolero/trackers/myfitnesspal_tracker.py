@@ -119,7 +119,7 @@ class MyFitnessPalTracker(BoleroTracker):
 
     def backfill(self):
         # TODO: Actually find user's earliest entry; range select based on that
-        self.scrape_range(date.today() - timedelta(years=1))
+        self.scrape_range(date.today() - timedelta(days=365))
 
     def get_last_week(self):
         """ Saves the past 7 days worth of entries """
