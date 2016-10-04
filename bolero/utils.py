@@ -36,15 +36,26 @@ def get_loaded_trackers():
     return config.get('enabled_trackers', [])
 
 
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        return instance
+
+
 class requires(object):
     """ Decorator to pass necessary config variables to tracker. """
     def __init__(self, *required_keys):
         self.required_keys = required_keys
 
     def __call__(self, func):
-        def decorator():
+        def decorator(self_other=None):
             keys = get_config_keys(self.required_keys)
-            return func(keys)
+            return func(self_other, keys) if self_other else func(keys)
         # Preserve original function name
         decorator.__name__ = func.__name__
         decorator.__module__ = func.__module__

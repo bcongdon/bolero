@@ -1,8 +1,8 @@
 import myfitnesspal
 from ..utils import requires
-from ..app import db, manager
+from . import db
 from datetime import date, timedelta
-from ..scheduler import scheduler
+from .tracker import BoleroTracker
 from collections import defaultdict
 
 foods_tbl = db.Table('food_join',
@@ -94,31 +94,36 @@ class MFPDay(db.Model):
         db.session.commit()
 
 
-@requires('myfitnesspal.username')
-def handle_authentication(config):
-    return myfitnesspal.Client(config['myfitnesspal.username'])
+class MyFitnessPalTracker(BoleroTracker):
+    service_name = 'myfitnesspal'
 
+    @requires('myfitnesspal.username')
+    def handle_authentication(self, config):
+        return myfitnesspal.Client(config['myfitnesspal.username'])
 
-def get_day(date=date.today()):
-    """ Saves a day's (defaults to today) nutrition entries """
-    api = handle_authentication()
-    day = api.get_date(date)
-    MFPDay.save_or_update_day(day)
+    def get_day(self, date=date.today()):
+        """ Saves a day's (defaults to today) nutrition entries """
+        api = self.client
+        day = api.get_date(date)
+        MFPDay.save_or_update_day(day)
 
+    def scrape_range(self, start, end=date.today()):
+        """ Saves the range of day entries between 'start' and 'end' """
+        d = start
+        while d <= end:
+            self.get_day(d)
+            d += timedelta(days=1)
 
-def backfill(start, end=date.today()):
-    """ Saves the range of day entries between 'start' and 'end' """
-    d = start
-    while d <= end:
-        get_day(d)
-        d += timedelta(days=1)
+    def update(self):
+        self.get_last_week()
 
+    def backfill(self):
+        # TODO: Actually find user's earliest entry; range select based on that
+        self.scrape_range(date.today() - timedelta(years=1))
 
-@scheduler.scheduled_job('interval', days=1)
-def get_last_week():
-    """ Saves the past 7 days worth of entries """
-    backfill(date.today() - timedelta(days=7))
+    def get_last_week(self):
+        """ Saves the past 7 days worth of entries """
+        self.scrape_range(date.today() - timedelta(days=7))
 
-
-def create_api():
-    manager.create_api(MFPDay, include_methods=['food_counts'])
+    def create_api(self, manager):
+        manager.create_api(MFPDay, include_methods=['food_counts'])

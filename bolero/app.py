@@ -1,9 +1,11 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_restless import APIManager
+from .trackers import db
 import logging
-import importlib
 from .utils import get_loaded_trackers, get_config_file
+from . import tracker_classes
+from .scheduler import scheduler
+
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -15,21 +17,32 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Setup logging
 logging.basicConfig(level="INFO")
 
-db = SQLAlchemy(app)
-
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
 
+def load_trackers():
+    loaded_trackers = get_loaded_trackers()  # Load names of imported trackers
+
+    # Filter enabled tracker object classes
+    return [x for x in tracker_classes if x.__name__ in loaded_trackers or
+            x.service_name in loaded_trackers]
+
+
 def setup():
-    # Import enabled trackers
-    loaded_trackers = get_loaded_trackers()
-    for t in loaded_trackers:
-        logger.info('Loading tracker: {}'.format(t))
-        tracker = importlib.import_module('.trackers.' + t, 'bolero')
-        tracker.create_api()
+    db.init_app(app)
 
-    db.create_all()
+    for t in load_trackers():
+        t_instance = t()
+        t_instance.create_api(manager)
 
+        # Add scheduled jobs for update / backfill
+        scheduler.add_job(t_instance.update, trigger='interval',
+                          **t_instance.update_interval)
+        scheduler.add_job(t_instance.backfill, trigger='interval',
+                          **t_instance.backfill_interval)
+    # Initialize db tables
+    with app.app_context():
+        db.create_all()
 
 # Load CLI commands
 from . import cli
