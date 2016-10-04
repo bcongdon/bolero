@@ -1,7 +1,6 @@
 import wunderpy2
 from . import db
 from ..utils import requires
-from ..scheduler import scheduler
 from .tracker import BoleroTracker
 import logging
 from dateutil.parser import parse
@@ -10,11 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True))
     completed_at = db.Column(db.DateTime(timezone=True))
-    list_id = db.Column(db.Integer, db.ForeignKey('list.id'))
+    list_id = db.Column(db.BigInteger, db.ForeignKey('list.id'))
 
     @staticmethod
     def save_or_update(t):
@@ -49,6 +48,8 @@ class List(db.Model):
 
 
 class WunderlistTracker(BoleroTracker):
+    service_name = 'wunderlist'
+
     @requires('wunderlist.access_token', 'wunderlist.client_id')
     def handle_authentication(self, config):
         api = wunderpy2.WunderApi()
@@ -56,13 +57,15 @@ class WunderlistTracker(BoleroTracker):
                                 config['wunderlist.client_id'])
         return client
 
-    # @scheduler.scheduled_job('interval', hours=1)
+    def update(self):
+        self.get_tasks()
+
     def get_tasks(self):
         """
         Syncs and saves all completed and non-completed tasks for the
         authenticated user
         """
-        api = self.client()
+        api = self.client
         lists = api.get_lists()
         map(List.save_or_update, lists)
         list_ids = map(lambda x: x['id'], lists)

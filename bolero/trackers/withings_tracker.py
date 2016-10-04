@@ -37,11 +37,6 @@ class WithingsTracker(BoleroTracker):
     def update(self):
         self.get_measurements()
 
-    def backfill(self):
-        # Backfill with Withings is the same as update, b/c all measurements
-        # are scraped regardless
-        self.update()
-
     def get_measurements(self):
         """
         Saves all measurements (weight, body fat, etc) for the authenticated
