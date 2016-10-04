@@ -1,6 +1,11 @@
 language: python
 python:
-  - "3.4"
-  - "3.5"
+  - "2.7"
+services:
+  - postgresql
 install: "pip install -r requirements.txt"
+before_script:
+  - psql -c 'create database bolero_test;' -U postgres
+env:
+  - SQL_URI=postgresql://postgres@localhost/bolero_test
 script: nosetests
