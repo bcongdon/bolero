@@ -2,7 +2,6 @@ import myfitnesspal
 from ..utils import requires
 from . import db
 from datetime import date, timedelta
-from ..scheduler import scheduler
 from .tracker import BoleroTracker
 from collections import defaultdict
 
@@ -96,8 +95,10 @@ class MFPDay(db.Model):
 
 
 class MyFitnessPalTracker(BoleroTracker):
+    service_name = 'myfitnesspal'
+
     @requires('myfitnesspal.username')
-    def handle_authentication(self, config):
+    def handleAuthentication(self, config):
         return myfitnesspal.Client(config['myfitnesspal.username'])
 
     def get_day(self, date=date.today()):
@@ -113,7 +114,13 @@ class MyFitnessPalTracker(BoleroTracker):
             self.get_day(d)
             d += timedelta(days=1)
 
-    # @scheduler.scheduled_job('interval', days=1)
+    def update(self):
+        self.get_last_week()
+
+    def backfill(self):
+        # TODO: Actually find user's earliest entry; range select based on that
+        self.scrape_range(date.today() - timedelta(years=1))
+
     def get_last_week(self):
         """ Saves the past 7 days worth of entries """
         self.scrape_range(date.today() - timedelta(days=7))
