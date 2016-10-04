@@ -24,6 +24,8 @@ class Measurement(db.Model):
 
 
 class WithingsTracker(BoleroTracker):
+    service_name = 'withings'
+
     @requires('withings.access_token', 'withings.access_token_secret',
               'withings.consumer_key', 'withings.consumer_secret',
               'withings.user_id')
@@ -32,7 +34,14 @@ class WithingsTracker(BoleroTracker):
         creds = WithingsCredentials(**config)
         return WithingsApi(creds)
 
-    # @scheduler.scheduled_job('interval', hours=1)
+    def update(self):
+        self.get_measurements()
+
+    def backfill(self):
+        # Backfill with Withings is the same as update, b/c all measurements
+        # are scraped regardless
+        self.update()
+
     def get_measurements(self):
         """
         Saves all measurements (weight, body fat, etc) for the authenticated

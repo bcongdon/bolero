@@ -9,7 +9,7 @@ class BoleroTracker(object):
     service_name = None
 
     def __init__(self):
-        self.client = self.handleAuthentication()
+        self.client = self.handle_authentication()
 
     def handle_authentication(self):
         raise NotImplementedError
