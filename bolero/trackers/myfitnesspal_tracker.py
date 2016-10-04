@@ -98,7 +98,7 @@ class MyFitnessPalTracker(BoleroTracker):
     service_name = 'myfitnesspal'
 
     @requires('myfitnesspal.username')
-    def handleAuthentication(self, config):
+    def handle_authentication(self, config):
         return myfitnesspal.Client(config['myfitnesspal.username'])
 
     def get_day(self, date=date.today()):

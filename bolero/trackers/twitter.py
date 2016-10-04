@@ -30,7 +30,7 @@ class TwitterTracker(BoleroTracker):
 
     @requires('twitter.consumer_key', 'twitter.consumer_secret',
               'twitter.access_token_key', 'twitter.access_token_secret')
-    def handleAuthentication(self, config):
+    def handle_authentication(self, config):
         """ Authenticate and return an authenticated tweepy API object """
         auth = tweepy.OAuthHandler(config['twitter.consumer_key'],
                                    config['twitter.consumer_secret'])
