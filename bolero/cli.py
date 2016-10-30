@@ -39,7 +39,8 @@ def update(tracker):
 @app.cli.command()
 @click.option('--tracker', type=click.Choice(map(lambda x: x.service_name,
                                                  tracker_classes)))
-def backfill():
+def backfill(tracker):
     setup()
     for t in load_trackers():
-        t().backfill()
+        if not tracker or t.service_name == tracker:
+            t().backfill()
