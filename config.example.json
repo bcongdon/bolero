@@ -2,13 +2,15 @@
 
     "enabled_trackers": ["myfitnesspal_tracker", "twitter", "withings_tracker", "wunderlist"],
 
+    "myfitnesspal.username": "",
+
+    "todoist.username": "",
+    "todoist.password": "",
+
     "twitter.consumer_key": "",
     "twitter.consumer_secret": "",
     "twitter.access_token_key": "",
     "twitter.access_token_secret": "",
-
-    "wunderlist.access_token": "",
-    "wunderlist.client_id": "",
 
     "withings.access_token": "",
     "withings.consumer_key": "",
@@ -16,5 +18,7 @@
     "withings.access_token_secret": "",
     "withings.consumer_secret": "",
 
-    "myfitnesspal.username": ""
+    "wunderlist.access_token": "",
+    "wunderlist.client_id": "",
+
 }
