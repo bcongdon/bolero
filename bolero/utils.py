@@ -27,7 +27,6 @@ def get_config_keys(keys):
 
 def check_auth(*args, **kw):
     token = get_config_file().get('token', None)
-    raise 'h'
     logger.warn(args, kw, token)
 
 

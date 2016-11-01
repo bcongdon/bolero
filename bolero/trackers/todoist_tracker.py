@@ -5,12 +5,14 @@ from .tracker import BoleroTracker
 from ..utils import requires
 logger = logging.getLogger(__name__)
 
-class Task(db.Model):
+
+class TodoistTask(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True))
     completed_at = db.Column(db.DateTime(timezone=True))
     list_id = db.Column(db.BigInteger, db.ForeignKey('list.id'))
+
 
 class TodoistTracker(BoleroTracker):
 
@@ -19,3 +21,6 @@ class TodoistTracker(BoleroTracker):
         api = todoist.TodoistAPI()
         return api.user.login(config['todoist.username'],
                               config['todoist.password'])
+
+    def update(self):
+        response = self.client.sync()    
