@@ -23,4 +23,4 @@ class TodoistTracker(BoleroTracker):
                               config['todoist.password'])
 
     def update(self):
-        response = self.client.sync()    
+        response = self.client.sync()
