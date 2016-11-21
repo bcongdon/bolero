@@ -32,16 +32,19 @@ def load_trackers():
             x.service_name in loaded_trackers]
 
 
-def create_db():
+def setup_db():
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     if not database_exists(engine.url):
         create_database(engine.url)
 
-
-def setup():
-    create_db()
     db.init_app(app)
 
+    # Initialize db tables
+    with app.app_context():
+        db.create_all()
+
+
+def setup_trackers():
     for t in load_trackers():
         t_instance = t()
         t_instance.create_api(manager)
@@ -51,9 +54,12 @@ def setup():
                           **t_instance.update_interval)
         scheduler.add_job(t_instance.backfill, trigger='interval',
                           **t_instance.backfill_interval)
-    # Initialize db tables
-    with app.app_context():
-        db.create_all()
+
+
+def setup():
+    setup_db()
+    setup_trackers()
+
 
 # Load CLI commands
 from . import cli

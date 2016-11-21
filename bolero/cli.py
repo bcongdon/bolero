@@ -1,4 +1,4 @@
-from .app import app, load_trackers, setup
+from .app import app, load_trackers, setup_db
 from withings import WithingsAuth
 import uuid
 import click
@@ -30,7 +30,7 @@ def generatesecret():
 @click.option('--tracker', type=click.Choice(map(lambda x: x.service_name,
                                                  tracker_classes)))
 def update(tracker):
-    setup()
+    setup_db()
     for t in load_trackers():
         if not tracker or t.service_name == tracker:
             t().update()
@@ -40,7 +40,7 @@ def update(tracker):
 @click.option('--tracker', type=click.Choice(map(lambda x: x.service_name,
                                                  tracker_classes)))
 def backfill(tracker):
-    setup()
+    setup_db()
     for t in load_trackers():
         if not tracker or t.service_name == tracker:
             t().backfill()

@@ -15,6 +15,7 @@ class TodoistTask(db.Model):
 
 
 class TodoistTracker(BoleroTracker):
+    service_name = 'todoist'
 
     @requires('todoist.username', 'todoist.password')
     def handle_authentication(self, config):
@@ -24,3 +25,4 @@ class TodoistTracker(BoleroTracker):
 
     def update(self):
         response = self.client.sync()
+
