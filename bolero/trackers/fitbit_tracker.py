@@ -1,9 +1,12 @@
 import fitbit
 from ..utils import requires
+from ..scheduler import scheduler
 from . import db
 from .tracker import BoleroTracker
 import datetime
-
+from dateutil.parser import parse
+import logging
+logger = logging.getLogger(__name__)
 
 class FitbitDay(db.Model):
     date = db.Column(db.Date, primary_key=True)
@@ -42,10 +45,32 @@ class FitbitTracker(BoleroTracker):
         db.session.add(db_date)
         db.session.commit()
 
+    def save_range(self, start, end):
+        date = start
+        while date <= datetime.date.today():
+            try:
+                self.save_or_update(date)
+            except fitbit.exceptions.HTTPTooManyRequests:
+                next_hour = datetime.datetime.now()
+                next_hour = (next_hour.replace(minute=0, second=30) +
+                             datetime.timedelta(hours=1))
+                logger.info("Got rate limited. Resuming at " +
+                            next_hour.isoformat())
+                scheduler.add_job(self.save_range, args=(date, end),
+                                  next_run_time=next_hour)
+                break
+            date += datetime.timedelta(days=1)
+
     def update(self):
         date = datetime.date.today()
         for i in range(7):
             self.save_or_update(date=date - datetime.timedelta(days=i))
+
+    @requires('fitbit.start_date')
+    def backfill(self, config):
+        start = parse(config['fitbit.start_date']).date()
+        self.save_range(start, datetime.date.today())
+        
 
     def create_api(self, manager):
         manager.create_api(FitbitDay)
