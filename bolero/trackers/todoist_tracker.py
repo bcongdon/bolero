@@ -71,3 +71,7 @@ class TodoistTracker(BoleroTracker):
         map(lambda x: TodoistTask.save_or_update(x, False), uncompleted_tasks)
         completed_tasks = self.client.get_completed_tasks()
         map(lambda x: TodoistTask.save_or_update(x, True), completed_tasks)
+
+    def create_api(self, manager):
+        manager.create_api(TodoistTask)
+        manager.create_api(TodoistProject)
