@@ -1,3 +1,7 @@
+import logging
+logger = logging.getLogger(__name__)
+
+
 class BoleroTracker(object):
     service_name = None
 
@@ -11,6 +15,7 @@ class BoleroTracker(object):
     service_name = None
 
     def __init__(self):
+        logger.info("Authenticating client for: " + self.__class__.__name__)
         self.client = self.handle_authentication()
 
     def handle_authentication(self):

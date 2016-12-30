@@ -1,6 +1,8 @@
 {
 
-    "enabled_trackers": ["myfitnesspal_tracker", "twitter", "withings_tracker", "wunderlist"],
+    "enabled_trackers": [],
+    "sql_uri": "postgresql://localhost/bolero",
+    "secret_key": "",
 
     "myfitnesspal.username": "",
 
@@ -20,5 +22,10 @@
 
     "wunderlist.access_token": "",
     "wunderlist.client_id": "",
+
+    "fitbit.consumer_key": "",
+    "fitbit.consumer_secret": "",
+    "fitbit.refresh_token": "",
+    "fitbit.access_token": "",
 
 }

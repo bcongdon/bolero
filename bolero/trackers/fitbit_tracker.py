@@ -1,6 +1,5 @@
 import fitbit
 from ..utils import requires
-from ..scheduler import scheduler
 from . import db
 from .tracker import BoleroTracker
 import datetime
@@ -9,7 +8,9 @@ from dateutil.relativedelta import relativedelta
 import logging
 logger = logging.getLogger(__name__)
 
+
 class FitbitDay(db.Model):
+    ''' Model to hold one days worth of Fitbit data '''
     date = db.Column(db.Date, primary_key=True)
     steps = db.Column(db.Integer)
     calories_burned = db.Column(db.Integer)
@@ -22,6 +23,7 @@ class FitbitDay(db.Model):
 
 class FitbitTracker(BoleroTracker):
     service_name = 'fitbit'
+    minimum_step_threshold = 100
 
     @requires('fitbit.consumer_key', 'fitbit.consumer_secret',
               'fitbit.refresh_token', 'fitbit.access_token')
@@ -34,7 +36,10 @@ class FitbitTracker(BoleroTracker):
     def save_or_update(self, date, steps, caloriesOut, floors,
                        lightly_active_minutes, fairly_active_minutes,
                        very_active_minutes, distance):
-
+        '''
+        Creates a new row if date not found, updates old date row if already
+        exists
+        '''
         db_date = (FitbitDay.query.filter_by(date=date).first() or
                    FitbitDay(date=date))
         db_date.date = date
@@ -49,6 +54,7 @@ class FitbitTracker(BoleroTracker):
         db.session.commit()
 
     def fetch_day(self, date):
+        ''' Downloads and stores Fitbit data for the given day '''
         day = self.client.activities(date=date)['summary']
         self.save_or_update(
             date,
@@ -61,7 +67,11 @@ class FitbitTracker(BoleroTracker):
             next(i for i in day['distances']
                  if i['activity'] == 'total')['distance'])
 
-    def save_range(self, start, end):
+    def fetch_range(self, start, end):
+        '''
+        Downloads and stores Fitbit data for dates between the given start and
+        end dates
+        '''
         attributes = ['steps', 'calories', 'floors', 'minutesLightlyActive',
                       'minutesFairlyActive', 'minutesVeryActive', 'distance']
         while start <= end:
@@ -88,14 +98,20 @@ class FitbitTracker(BoleroTracker):
             start += relativedelta(years=1)
 
     def update(self):
+        '''
+        Fetches and saves last 7 days of Fitbit activity
+        '''
         date = datetime.date.today()
         for i in range(7):
             self.save_or_update(date=date - datetime.timedelta(days=i))
 
     def backfill(self):
+        '''
+        Fetches and saves all Fitbit activity since the user signed up
+        '''
         profile = self.client.user_profile_get()
         start = parse(profile['user']['memberSince']).date()
-        self.save_range(start, datetime.date.today())
+        self.fetch_range(start, datetime.date.today())
 
     def create_api(self, manager):
         manager.create_api(FitbitDay)
