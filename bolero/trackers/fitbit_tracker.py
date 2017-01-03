@@ -103,7 +103,7 @@ class FitbitTracker(BoleroTracker):
         '''
         date = datetime.date.today()
         for i in range(7):
-            self.save_or_update(date=date - datetime.timedelta(days=i))
+            self.fetch_day(date=date - datetime.timedelta(days=i))
 
     def backfill(self):
         '''

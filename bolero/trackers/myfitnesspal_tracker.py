@@ -4,6 +4,9 @@ from . import db
 from datetime import date, timedelta
 from .tracker import BoleroTracker
 from collections import defaultdict
+import logging
+logger = logging.getLogger(__name__)
+
 
 foods_tbl = db.Table('food_join',
                      db.Column('food_id', db.Integer,
@@ -103,8 +106,8 @@ class MyFitnessPalTracker(BoleroTracker):
 
     def get_day(self, date=date.today()):
         """ Saves a day's (defaults to today) nutrition entries """
-        api = self.client
-        day = api.get_date(date)
+        logger.info("Saving day: " + str(date))
+        day = self.client.get_date(date)
         MFPDay.save_or_update_day(day)
 
     def scrape_range(self, start, end=date.today()):
