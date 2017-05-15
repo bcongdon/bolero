@@ -75,7 +75,7 @@ class FitbitTracker(BoleroTracker):
         logger.info("Logging range {} to {}".format(start, end))
         attributes = ['steps', 'calories', 'floors', 'minutesLightlyActive',
                       'minutesFairlyActive', 'minutesVeryActive', 'distance']
-        while start <= end:
+        while start <= end + relativedelta(years=1):
             data = {}
             for a in attributes:
                 res = self.client.time_series(
@@ -86,6 +86,8 @@ class FitbitTracker(BoleroTracker):
                            for i in res[res.keys()[0]]}
             dates = data['steps'].keys()
             for d in dates:
+                if parse(d).date() > datetime.date.today():
+                    continue
                 logger.info("Saving day: {}".format(d))
                 self.save_or_update(
                     parse(d).date(),
