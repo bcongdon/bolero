@@ -3,8 +3,6 @@ logger = logging.getLogger(__name__)
 
 
 class BoleroTracker(object):
-    service_name = None
-
     # Default APScheduler interval for 'update' scheduled scrape
     update_interval = {'hours': 1}
 

@@ -72,6 +72,7 @@ class FitbitTracker(BoleroTracker):
         Downloads and stores Fitbit data for dates between the given start and
         end dates
         '''
+        logger.info("Logging range {} to {}".format(start, end))
         attributes = ['steps', 'calories', 'floors', 'minutesLightlyActive',
                       'minutesFairlyActive', 'minutesVeryActive', 'distance']
         while start <= end:
@@ -85,6 +86,7 @@ class FitbitTracker(BoleroTracker):
                            for i in res[res.keys()[0]]}
             dates = data['steps'].keys()
             for d in dates:
+                logger.info("Saving day: {}".format(d))
                 self.save_or_update(
                     parse(d).date(),
                     data['steps'][d],
@@ -102,6 +104,7 @@ class FitbitTracker(BoleroTracker):
         Fetches and saves last 7 days of Fitbit activity
         '''
         date = datetime.date.today()
+        logger.info("Running update of last week")
         for i in range(7):
             self.fetch_day(date=date - datetime.timedelta(days=i))
 
