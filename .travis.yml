@@ -8,4 +8,4 @@ before_script:
   - psql -c 'create database bolero_test;' -U postgres
 env:
   - SQL_URI=postgresql://postgres@localhost/bolero_test
-script: nosetests
+script: nosetests --with-coverage --cover-package=bolero

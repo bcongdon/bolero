@@ -4,7 +4,7 @@ from .trackers import db
 import logging
 from .utils import get_loaded_trackers, get_config_file
 from . import tracker_classes
-from .scheduler import scheduler
+from .scheduler import scheduler, initialize_scheduler
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 import os
@@ -34,8 +34,6 @@ def load_trackers():
 
 def setup_db():
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    if not database_exists(engine.url):
-        create_database(engine.url)
 
     db.init_app(app)
 
@@ -58,6 +56,7 @@ def setup_trackers():
 
 def setup():
     setup_db()
+    initialize_scheduler()
     setup_trackers()
 
 

@@ -10,9 +10,11 @@ job_defaults = {
     'max_instances': 3
 }
 
-# Setup and start scheduler
 scheduler = BackgroundScheduler()
-scheduler.configure(executors=executors,
-                    job_defaults=job_defaults)
-logger.info('Starting scheduler')
-scheduler.start()
+
+def initialize_scheduler():
+    # Setup and start scheduler
+    scheduler.configure(executors=executors,
+                        job_defaults=job_defaults)
+    logger.info('Starting scheduler')
+    scheduler.start()
