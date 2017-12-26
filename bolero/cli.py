@@ -1,15 +1,15 @@
 from .app import app, load_trackers, setup_db
-from withings import WithingsAuth
+from nokia import NokiaAuth
 import uuid
 import click
 from . import tracker_classes
 
 
 @app.cli.command()
-def auth_withings():
+def auth_nokia_health():
     consumer_key = input("Consumer key?").strip()
     consumer_secret = input("Consumer secret?").strip()
-    auth = WithingsAuth(consumer_key, consumer_secret)
+    auth = NokiaAuth(consumer_key, consumer_secret)
     authorize_url = auth.get_authorize_url()
     print("Go to %s allow the app and copy your oauth_verifier" %
           authorize_url)

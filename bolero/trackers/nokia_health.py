@@ -2,7 +2,7 @@ from ..utils import requires
 import logging
 from . import db
 from .tracker import BoleroTracker
-from withings import WithingsApi, WithingsCredentials
+from nokia import NokiaAuth, NokiaApi
 logger = logging.getLogger(__name__)
 
 
@@ -22,16 +22,16 @@ class Measurement(db.Model):
         db.session.commit()
 
 
-class WithingsTracker(BoleroTracker):
-    service_name = 'withings'
+class NokiaHealthTracker(BoleroTracker):
+    service_name = 'nokia_health'
 
-    @requires('withings.access_token', 'withings.access_token_secret',
-              'withings.consumer_key', 'withings.consumer_secret',
-              'withings.user_id')
+    @requires('nokia_health.access_token', 'nokia_health.access_token_secret',
+              'nokia_health.consumer_key', 'nokia_health.consumer_secret',
+              'nokia_health.user_id')
     def handle_authentication(self, config):
         config = {x.split('.')[1]: config[x] for x in config}
-        creds = WithingsCredentials(**config)
-        return WithingsApi(creds)
+        creds = NokiaAuth(**config)
+        return NokiaApi(creds)
 
     def update(self):
         self.get_measurements()

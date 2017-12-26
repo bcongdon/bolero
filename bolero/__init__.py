@@ -1,15 +1,15 @@
-from .trackers.twitter import TwitterTracker
-from .trackers.myfitnesspal_tracker import MyFitnessPalTracker
-from .trackers.withings_tracker import WithingsTracker
-from .trackers.wunderlist import WunderlistTracker
-from .trackers.todoist_tracker import TodoistTracker
 from .trackers.fitbit_tracker import FitbitTracker
+from .trackers.myfitnesspal_tracker import MyFitnessPalTracker
+from .trackers.nokia_health import NokiaHealthTracker
+from .trackers.todoist_tracker import TodoistTracker
+from .trackers.twitter import TwitterTracker
+from .trackers.wunderlist import WunderlistTracker
 
 tracker_classes = [
-    TwitterTracker,
+    FitbitTracker,
     MyFitnessPalTracker,
-    WithingsTracker,
-    WunderlistTracker,
+    NokiaHealthTracker,
     TodoistTracker,
-    FitbitTracker
+    TwitterTracker,
+    WunderlistTracker,
 ]
