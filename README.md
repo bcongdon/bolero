@@ -19,17 +19,11 @@ Bolero aims to provide a platform on which you can build your own quantified sel
 	cd bolero
 	```
 
-3. Create and activate a virtualenv with Python3 
-
-	```sh
-	virtualenv -p python3 venv
-	source venv/bin/activate
-	```
-4. Install bolero's pip dependencies
+4. Install bolero's dependencies using [Pipenv](https://github.com/pypa/pipenv)
 
 	```sh
 	# Install bolero's pip dependencies
-	pip install -r requirements.txt
+	pipenv install
 	```
 
 5. Run the startup script.
@@ -37,7 +31,7 @@ Bolero aims to provide a platform on which you can build your own quantified sel
 	```sh
 	./start.py
 	```
-	
+
 ### Heroku Deployment
 TODO
 
@@ -48,7 +42,7 @@ Trackers live in `bolero/trackers/` and provide both models and API scrapers for
 
 * Fitbit
 * MyFitnessPal
+* Nokia Health (formerly Withings)
 * Todoist
 * Twitter
-* Withings
 * Wunderlist
