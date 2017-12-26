@@ -1,0 +1,25 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+tweepy = "*"
+apscheduler = "*"
+fitbit = "*"
+flask = "*"
+flask-restless = "*"
+flask-sqlalchemy = "*"
+pytodoist = "*"
+"wunderpy2" = "*"
+myfitnesspal = "*"
+sqlalchemy-utils = "*"
+"psycopg2" = "*"
+nokia = "*"
+
+
+[dev-packages]
+
