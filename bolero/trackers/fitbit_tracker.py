@@ -83,7 +83,7 @@ class FitbitTracker(BoleroTracker):
                     period='1y',
                     base_date=start)
                 data[a] = {i['dateTime']: i['value']
-                           for i in res[res.keys()[0]]}
+                           for i in res[list(res.keys())[0]]}
             dates = data['steps'].keys()
             for d in dates:
                 if parse(d).date() > datetime.date.today():

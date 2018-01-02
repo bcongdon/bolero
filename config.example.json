@@ -14,11 +14,11 @@
     "twitter.access_token_key": "",
     "twitter.access_token_secret": "",
 
-    "withings.access_token": "",
-    "withings.consumer_key": "",
-    "withings.user_id": "",
-    "withings.access_token_secret": "",
-    "withings.consumer_secret": "",
+    "nokia_health.access_token": "",
+    "nokia_health.consumer_key": "",
+    "nokia_health.user_id": "",
+    "nokia_health.access_token_secret": "",
+    "nokia_health.consumer_secret": "",
 
     "wunderlist.access_token": "",
     "wunderlist.client_id": "",
